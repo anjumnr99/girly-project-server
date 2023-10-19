@@ -58,7 +58,31 @@ async function run() {
       res.send(result)
     });
 
-   
+
+    app.put('/products/:id', async(req,res)=>{
+      const ids = req.params.id;
+      const filter = {_id : new ObjectId(ids)};
+      const options = { upsert: true };
+      const updatedProduct = req.body;
+      const product ={
+          $set : {
+             
+             name : updatedProduct.name,
+             brand : updatedProduct.brand,
+             type : updatedProduct.type,
+             image : updatedProduct.image,
+             price : updatedProduct.price,
+             rating : updatedProduct.rating,
+             description : updatedProduct.description
+         }
+      }
+
+      const result = await productCollection.updateOne(filter,product,options);
+      res.send(result)
+
+  })
+
+
 
     app.get('/brands', async (req, res) => {
       const cursor = brandCollection.find();
@@ -91,6 +115,22 @@ async function run() {
       res.send(result)
     });
 
+    app.get('/cart/:id', async (req, res) => {
+      const ids = req.params.id;
+      const query = { _id: new ObjectId(ids) }
+      const result = await cartCollection.findOne(query)
+      res.send(result)
+    });
+
+
+    app.delete('/cart/:id', async (req, res) => {
+      const ids = req.params.id;
+      const query = {_id : new ObjectId(ids)}
+      const result = await cartCollection.deleteOne(query)
+      res.send(result)
+    });
+
+   
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
