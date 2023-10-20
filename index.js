@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+require("dotenv").config();
+
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -9,15 +11,12 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// girlyProject
-// x1Ja9yaAaRoy3VjC
 
 
 
+// const uri = "mongodb+srv://girlyProject:x1Ja9yaAaRoy3VjC@cluster0.7nwjyzo.mongodb.net/?retryWrites=true&w=majority";
 
-const uri = "mongodb+srv://girlyProject:x1Ja9yaAaRoy3VjC@cluster0.7nwjyzo.mongodb.net/?retryWrites=true&w=majority";
-
-// const uri = "mongodb+srv://<username>:<password>@cluster0.7nwjyzo.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.7nwjyzo.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -115,9 +114,19 @@ async function run() {
       res.send(result)
     });
 
+    app.get('/cart/:email', async (req, res) => {
+      const userEmail = req.params.email;
+      const query = { userEmail: userEmail }
+      console.log(query);
+      const result = await cartCollection.findOne(query)
+      res.send(result)
+    });
+
+
     app.get('/cart/:id', async (req, res) => {
       const ids = req.params.id;
-      const query = { _id: new ObjectId(ids) }
+      const query = {_id : new ObjectId(ids) }
+      console.log(query);
       const result = await cartCollection.findOne(query)
       res.send(result)
     });
